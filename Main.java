@@ -1,155 +1,180 @@
-import java.util.HashMap;
-import java.util.Map;
+package com.example.architectureproject;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-// Singleton pattern used for managing personality types
-class PersonalityTypes {
-    private static final PersonalityTypes instance = new PersonalityTypes();
-    private Map<String, String> personalityMap;
 
-    private PersonalityTypes() {
-        personalityMap = new HashMap<>();
-        // Initialize with some example personality types and descriptions
-        personalityMap.put("INTJ", "Architect: Imaginative and strategic thinkers with a plan for everything.");
-        personalityMap.put("INFP", "Mediator: Poetic, kind, and altruistic people, always eager to help.");
-        // Add more personality types and descriptions as needed
-    }
+public class PersonalityTest {
+    static int questionNumber = 1;
 
-    public static PersonalityTypes getInstance() {
-        return instance;
-    }
-
-    public void addPersonalityType(String type, String description) {
-        personalityMap.put(type, description);
-    }
-
-    public String getDescription(String type) {
-        return personalityMap.get(type);
-    }
-}
-
-// Factory method pattern used for creating personality types based on test result
-class PersonalityFactory {
-    public static String createPersonalityType(int score) {
-        // Assign personality type based on the score range (This is a simplified version)
-        if (score >= 25) {
-            return "INTJ";
-        } else {
-            return "INFP";
-        }
-        // Add more conditions and personality types as needed
-    }
-}
-
-// Observer pattern used to notify users about their personality type
-interface PersonalityObserver {
-    void update(String personalityType);
-}
-
-class User implements PersonalityObserver {
-    private String name;
-    private String personalityType;
-
-    public User(String name) {
-        this.name = name;
-    }
-
-    public void solveTest() {
-        // Simulated test with 10 questions (This is a simplified version)
-        // Users choose an option from 1 to 5 for each question
-        Scanner scanner = new Scanner(System.in);
-        int totalScore = 0;
-        String question = null;
-
-        System.out.println("Please answer the following questions (Choose options from 1 to 5):");
-        // Simulated questions
-        // Replace these questions with actual questions in your application
-        for (int i = 1; i <= 20; i++) {
-            if(i == 1){
-                question = "You regularly make new friends.";
-            }
-            else if(i ==2){
-                question = "You spend a lot of your free time exploring various random topics that pique your interest.";
-            }
-            else if(i == 3){
-                question = "Seeing other people cry can easily make you feel like you want to cry too.";
-            }
-            else if(i == 4){
-                question = "You often make a backup plan for a backup plan.";
-            }
-            else if (i == 5) {
-                question = "You usually stay calm, even under a lot of pressure.";
-            }
-            else if(i == 6){
-                question = "At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.";
-            }
-            else if(i == 7){
-                question = "You prefer to completely finish one project before starting another.";
-            }
-            else if(i == 8){
-                question = "You are very sentimental.";
-            }
-            else if(i == 9){
-                question = "You like to use organizing tools like schedules and lists.";
-            }
-            else if(i == 10){
-                question = "Even a small mistake can cause you to doubt your overall abilities and knowledge.";
-            }
-            else if(i == 11){
-                question = "You feel comfortable just walking up to someone you find interesting and striking up a conversation.";
-            }
-            else if(i == 12){
-                question = "You are not too interested in discussing various interpretations and analyses of creative works.";
-            }
-            else if(i == 13){
-                question = "You are more inclined to follow your head than your heart.";
-            }
-            else if(i == 14){
-                question = "You usually prefer just doing what you feel like at any given moment instead of planning a particular daily routine.";
-            }
-            else if(i == 15){
-                question = "You rarely worry about whether you make a good impression on people you meet.";
-            }
-            else if(i == 16){
-                question = "You enjoy participating in group activities.";
-            }
-            else if(i ==17){
-                question = "You like books and movies that make you come up with your own interpretation of the ending.";
-            }
-            else if(i == 18){
-                question = "Your happiness comes more from helping others accomplish things than your own accomplishments.";
-            }
-            else if( i == 19){
-                question = "You are interested in so many things that you find it difficult to choose what to try next.";
-            }
-            else {
-                question = "You are prone to worrying that things will take a turn for the worse.";
-            }
-            System.out.println("Question " + i + ":" );
-            System.out.println(question);
-            System.out.println("Choose from 1-5, 1 mean you agree and 5 mean you disagree:");
-            int choice = scanner.nextInt();
-            totalScore += choice;
-        }
-
-        PersonalityTypes personalityTypes = PersonalityTypes.getInstance();
-        personalityType = PersonalityFactory.createPersonalityType(totalScore);
-
-        // Notify the user about their personality type
-        update(personalityType);
-    }
-
-    @Override
-    public void update(String personalityType) {
-        this.personalityType = personalityType;
-        System.out.println("Dear " + name + ", your personality type is: " + personalityType);
-        System.out.println("Description: " + PersonalityTypes.getInstance().getDescription(personalityType));
-    }
-}
-
-public class Main {
     public static void main(String[] args) {
-        User user = new User("John"); // Replace "John" with the user's name
-        user.solveTest();
+        String[] extroversionVsIntroversionTest;
+        String[] sensingVsIntuitionTest;
+        String[] thinkingVsFeelingTest;
+        String[] judgingVsPerceivingTest;
+
+        try {
+            extroversionVsIntroversionTest = readQuestionsFromFile("extroversion_vs_introversion.txt");
+            sensingVsIntuitionTest = readQuestionsFromFile("sensing_vs_intuition.txt");
+            thinkingVsFeelingTest = readQuestionsFromFile("thinking_vs_feeling.txt");
+            judgingVsPerceivingTest = readQuestionsFromFile("judging_vs_perceiving.txt");
+
+            int[] extrovertVsIntrovertAnswersStorage = new int[5];
+            int[] sensingVsIntuitionsAnswersStorage = new int[5];
+            int[] thinkingVsFeelingAnswersStorage = new int[5];
+            int[] judgingVsPerceivingAnswersStorage = new int[5];
+
+            StringBuilder result = new StringBuilder();
+
+            iterate(extroversionVsIntroversionTest, extrovertVsIntrovertAnswersStorage);
+            iterate(sensingVsIntuitionTest, sensingVsIntuitionsAnswersStorage);
+            iterate(thinkingVsFeelingTest, thinkingVsFeelingAnswersStorage);
+            iterate(judgingVsPerceivingTest, judgingVsPerceivingAnswersStorage);
+            int sumOfAsInExtroversion = sum(extrovertVsIntrovertAnswersStorage);
+            int sumOfAsInSensing = sum(sensingVsIntuitionsAnswersStorage);
+            int sumOfAsInThinking = sum(thinkingVsFeelingAnswersStorage);
+            int sumOfAsInJudging = sum(judgingVsPerceivingAnswersStorage);
+
+
+            // append personality type accordingly
+            if (sumOfAsInExtroversion < 3) result.append("I");
+            else {
+                result.append("E");
+            }
+
+            if (sumOfAsInSensing < 3) result.append("N");
+            else {
+                result.append("S");
+            }
+
+            if (sumOfAsInThinking < 3) result.append("F");
+            else {
+                result.append("T");
+            }
+
+            if(sumOfAsInJudging < 3) result.append("P");
+            else{
+                result.append("J");
+            }
+
+
+            // print personality results in a table.
+            System.out.println("\nYour choice at a glance\n");
+            System.out.printf("|%5s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s |%n", " ", "A", "B",
+                    " ", "A", "B", " ", "A", "B", " ", "A", "B");
+            int numbering = 1;
+            System.out.printf("%s%n", "-".repeat(74));
+            for (int i = 0; i< extrovertVsIntrovertAnswersStorage.length; i++) {
+                System.out.printf("|%5d | %3s | %3s | %3d | %3s | %3s | %3d | %3s | %3s | %3d | %3s | %3s |%n", numbering++,
+                        placeCheckmark(extrovertVsIntrovertAnswersStorage[i],1),
+                        placeCheckmark(extrovertVsIntrovertAnswersStorage[i], 2),
+                        numbering++, placeCheckmark(sensingVsIntuitionsAnswersStorage[i], 1),
+                        placeCheckmark(sensingVsIntuitionsAnswersStorage[i], 2),
+                        numbering++,
+                        placeCheckmark(thinkingVsFeelingAnswersStorage[i], 1),
+                        placeCheckmark(thinkingVsFeelingAnswersStorage[i], 2), numbering++,
+                        placeCheckmark(judgingVsPerceivingAnswersStorage[i], 1),
+                        placeCheckmark(judgingVsPerceivingAnswersStorage[i], 2));
+            }
+
+            System.out.printf("%s%n", "-".repeat(74));
+            System.out.printf("|%5s | %3d | %3d | %3s | %3d | %3d | %3s | %3d | %3d | %3s | %3d | %3d |%n", "TOTAL",
+                    countNumbers(extrovertVsIntrovertAnswersStorage, 1), countNumbers(extrovertVsIntrovertAnswersStorage, 0),
+                    " ", countNumbers(sensingVsIntuitionsAnswersStorage, 1), countNumbers(sensingVsIntuitionsAnswersStorage, 0), " ",
+                    countNumbers(thinkingVsFeelingAnswersStorage, 1),
+                    countNumbers(thinkingVsFeelingAnswersStorage, 0), " ",
+                    countNumbers(judgingVsPerceivingAnswersStorage, 1), countNumbers(judgingVsPerceivingAnswersStorage, 0));
+            System.out.printf("%s%n", "-".repeat(74));
+            System.out.printf("|%5s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s | %3s |%n", " ", "E", "I",
+                    " ", "S", "N", " ", "T", "F", " ", "J", "P");
+
+            System.out.println("Your personality type is " + result);
+            System.out.print("For your personality interpretation, visit : ");
+            System.out.println("https://www.truity.com/page/16-personality-types-myers-briggs");
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
+
+    public static String[] readQuestionsFromFile(String filename) throws FileNotFoundException {
+        File file = new File(filename);
+        Scanner scanner = new Scanner(file);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        while (scanner.hasNextLine()) {
+            stringBuilder.append(scanner.nextLine()).append("\n");
+        }
+
+        scanner.close();
+        return stringBuilder.toString().split("\n");
+    }
+
+    public static void iterate(String[] questions, int[] answers) {
+        Scanner scanner = new Scanner(System.in);
+        String optionAorB;
+        for (int number = 0; number < questions.length; number++) {
+            System.out.printf("Question %d%n", questionNumber++);
+            System.out.println(questions[number]);
+            System.out.println("Pick an option: A(agree) or B(disagree)");
+            optionAorB = getOption(scanner);
+            if ((optionAorB.equalsIgnoreCase("A"))) {
+                answers[number] = 1;
+            }
+        }
+    }
+
+
+
+    public static String getOption(Scanner input) {
+        String option;
+        while (true) {
+            try {
+                option = input.nextLine();
+                if (option.trim().equalsIgnoreCase("A".trim()) || option.trim().equalsIgnoreCase("B".trim())) {
+                    return option;
+                } else {
+                    throw new IllegalArgumentException("Wrong choice; choose A or B");
+                }
+            } catch (IllegalArgumentException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+    }
+
+
+
+
+
+    public static String placeCheckmark(int num, int position){
+        return (num == 1 && position == 1) || (num == 0 && position == 2) ? String.format("%c", '\u2713') : "";
+    }
+
+
+
+
+
+
+
+    public static int sum(int[] intArrays){
+        int sum = 0;
+        for(int number : intArrays) sum += number;
+        return sum;
+    }
+
+
+    public static int countNumbers(int[] numArray, int number){
+        int count = 0;
+        for(int num : numArray){
+            if(num == number) count++;
+        }
+        return count;
+    }
+
+
+
 }
+
+
